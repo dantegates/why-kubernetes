@@ -6,11 +6,11 @@
 
 Our story starts with an app. For our purposes, assume this is just some Python code that imports `sklearn` (or whatever your preferred ML framework is) to make predictions. We want to expose this code to some users - specifically the ability to make predictions.
 
-![](app.png)
+![](assets/why-kubernetes/app.png)
 
 In some cases this might be enough to make our users happy. However, more often, in industry especially, this paradigm is undesirable. Drawbacks to this approach include requiring users to have access to the source code and to be able to run said Python code in order get predictions. If the source code is proprietary this is a non-starter and if users aren't comfortable running Python code or downloading the source and installing  dependencies then our situation is more like
 
-![](reallife.png)
+![](assets/why-kubernetes/reallife.png)
 
 # REST APIs
 
@@ -18,23 +18,23 @@ Having encountered this situation, exposing the model with a REST API - that is 
 
 How do we proceed? Do we write our own HTTP library? No, we offload that responsibility to [flask](https://flask.palletsprojects.com/en/1.1.x/) (or whatever your preferred HTTP framework is).
 
-![](flask.png)
+![](assets/why-kubernetes/flask.png)
 
 Yet, this paradigm, too, is not without its downsides. flask [is not in the business of being a production grade server](https://flask.palletsprojects.com/en/1.1.x/tutorial/deploy/#run-with-a-production-server). This means if your API goes down, it stays down until someone starts it back up. Deploying upgrades requires stopping the running server and starting a new one. Once again, our situation is more like
 
-![](reallife2.png)
+![](assets/why-kubernetes/reallife2.png)
 
 # WSGI
 
 What do we do now? Do we write a production grade server? No, we offload that responsibility to [gunicorn](https://gunicorn.org/) (or whatever your preferred [wsgi](https://wsgi.readthedocs.io/en/latest/what.html) framework is), and let it wrap our flask app and serve model predictions.
 
-![](wsgi.png)
+![](assets/why-kubernetes/wsgi.png)
 
 # But how do I install this thing?
 
 At this point our humble `model.py` code has been wrapped in two layers, each with its own dependencies and complexity. Keeping track of all of these moving pieces can become cumbersome and, at this point, it's common to begin using containers to encapsulate all of the components.
 
-![](docker.png)
+![](assets/why-kubernetes/docker.png)
 
 # But how do I deploy this thing?
 
@@ -44,7 +44,7 @@ What do we do now, write a container orchestration platform? No, we offload that
 
 Finally our users our happy again.
 
-![](kubes1.png)
+![](assets/why-kubernetes/kubes1.png)
 
 # Final Thoughts
 
@@ -54,7 +54,7 @@ In fact, while the illustrations above highlight the idea that each added layer 
 
 In reality each gunicorn server is running one or more instances of our flask app. Just as Kubernetes is running one or more Pods, each running one or more containers, which are running the gunicorn servers, across one or more Kubernetes nodes. Needless to say the internet abounds with memes about the heartbreak of Kubernetes deployments.
 
-![](kubes2.png)
+![](assets/why-kubernetes/kubes2.png)
 
 Yet, many industries have adopted Kubernetes not without reason, some of which are
 
